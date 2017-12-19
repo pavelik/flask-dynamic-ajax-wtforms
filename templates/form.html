@@ -6,7 +6,6 @@
   <title>Dynamic WTForms Example w/ AJAX request</title>
 
   <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 
  </head>
  <body>
@@ -28,7 +27,7 @@
                     {% if field_item.name=="csrf_token" %}
                         {{ field_item() }}
                     {% else %}
-                        <li >{{field_item.label}} {{ field_item(pk=pk) }}</li>
+                        <li >{{field_item.label}} {{ field_item() }}</li>
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -41,10 +40,9 @@
     <div id="status" class="container"></div>
 
 
-    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-    <script src="http://momentjs.com/downloads/moment.min.js"></script>
+    <script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="//momentjs.com/downloads/moment.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -82,20 +80,42 @@
                     currentEntry = $(this).parents('ul#'+ button_id + ' li:last'),
                     newEntry = $(currentEntry.clone());
 
+                // clear input field before adding to DOM
                 newEntry.find('input').val('');
 
-                newEntry.find('input').attr("id", function(i, origValue){
-                    return origValue.split('-')[0] + '-' + (+origValue.split('-')[1]+1);
+                // increment id, name attributes for WTForms to pick up the values
+                newEntry.find('input').attr("id", function(i, origValue) {
+                    return origValue.replace(/(\d)/g, function(a,b) {
+                        return +b+1;
+                    });
                 });
 
-                newEntry.find('input').attr("name", function(i, origValue){
-                    return origValue.split('-')[0] + '-' + (+origValue.split('-')[1]+1);
+                newEntry.find('input').attr("name", function(i, origValue) {
+                    return origValue.replace(/(\d)/g, function(a,b) {
+                        return +b+1;
+                    });
                 });
 
-                newEntry.find('label').attr("for", function(i, origValue){
-                    return origValue.split('-')[0] + '-' + (+origValue.split('-')[1]+1);
+                // change labels as well for the sake of clarity
+                newEntry.find('label').attr("for", function(i, origValue) {
+                    return origValue.replace(/(\d)/g, function(a,b) {
+                        return +b+1;
+                    });
                 });
-                newEntry.find('label').text(capitalizeFirstLetter(newEntry.find('label').attr("for")));
+
+                // check if the label belongs to an embedded form
+                // i.e., if it's parent is a <th>
+                // if so, dont use the text from 'for' attr
+                newEntry.find('label').text(function(i, oldText) {
+                    if ($(this).parent().prop("tagName") === "TH") {
+                        return oldText;
+                    }
+
+                    else{
+                        return capitalizeFirstLetter($(this).attr("for"));
+                    }
+
+                });
 
                 newEntry.appendTo($('ul#form ul#'+ button_id));
 

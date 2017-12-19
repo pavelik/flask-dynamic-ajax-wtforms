@@ -1,7 +1,9 @@
 
 # Dynamic Ajax WTForm Example
 
-Example Flask App demonstrating a way on how to dynamically generate and process form fields using WTForms that are eventually submitted via Ajax requests.
+Example Flask App demonstrating a way on how to dynamically generate and process form fields using WTForms that are eventually submitted via Ajax requests. Fields can be generated both from server- and client-side.
+
+Processes/generates simple FormFields and [WTForms Field Enclosures](http://wtforms.simplecodes.com/docs/1.0.1/fields.html#field-enclosures) (both MultiFields [a list of fields] and MultiField Enclosures [a list of forms]).
 
 ## Install
 
